@@ -1,0 +1,30 @@
+แก้ player มี --
+UPDATE gamelist
+SET player = REPLACE(player, '–', '-')
+WHERE player LIKE '%–%';
+
+palyer = x-x
+UPDATE gamelist
+SET players = JSON_OBJECT('min', SUBSTRING_INDEX(player, '-', 1), 'max', SUBSTRING_INDEX(player, '-', -1))
+WHERE player LIKE '%-%';
+
+player = x
+UPDATE gamelist
+SET players = JSON_OBJECT('min', player, 'max', player)
+WHERE player NOT LIKE '%-%';
+
+
+แก้ players เป็น int
+UPDATE gamelist
+SET players = CASE 
+                WHEN player NOT LIKE '%-%' THEN JSON_OBJECT('min', CAST(player AS UNSIGNED), 'max', CAST(player AS UNSIGNED))
+                ELSE JSON_OBJECT('min', CAST(SUBSTRING_INDEX(player, '-', 1) AS UNSIGNED), 'max', CAST(SUBSTRING_INDEX(player, '-', -1) AS UNSIGNED))
+              END
+WHERE player REGEXP '^[0-9]+$' OR player LIKE '%-%';
+
+ลบ "" ออกจากตัวเลข min = x | max = x
+UPDATE gamelist
+SET players = JSON_UNQUOTE(JSON_REMOVE(players, '$.max')),
+    players = JSON_UNQUOTE(JSON_REMOVE(players, '$.min'))
+WHERE players LIKE '%"%';
+

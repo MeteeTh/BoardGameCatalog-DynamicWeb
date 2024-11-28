@@ -1,0 +1,48 @@
+*ตั้ง AI*
+ALTER TABLE gamelist AUTO_INCREMENT = เลขที่จะให้เริ่มรันใหม่;
+
+*แทนที่ค่า*
+REPLACE
+เช่น 'ลบช่องว่าง'
+UPDATE ตาราง
+SET ฟิลด์ = REPLACE(ฟิลด์, ' ', '')
+WHERE ฟิลด์ LIKE '% %';
+ความหมายคือ REPLACE(ฟิลด์, 'สิ่งที่จะแทน', 'สิ่งที่เป็น')
+% หมายถึงการแทนที่สตริงใดๆ ที่มีความยาวได้ที่จะเป็นศูนย์ หรือไม่มีเลยก็ได้ ในส่วนที่ระบุ
+' ' หมายถึงสตริงในส่วนที่ระบุ
+ตัวอย่างเช่นถ้าเรามีสตริง "hello world" แล้วเงื่อนไข LIKE '% %' จะเลือกข้อมูลนี้เนื่องจากมีช่องว่างอยู่ในสตริง แต่ถ้าเรามีสตริง "helloworld" ก็จะไม่ถูกเลือกเพราะไม่มีช่องว่างอยู่ในสตริง หรือถ้าเป็นคำ'%Children%' ก็จะเลือกข้อมูลที่มี Chilldren อยู่ในสตริงนั้นๆ
+
+
+ดูฟิลด์ time ว่ารายการไหน มีตัวเลขข้างหน้าต่ำที่สุด เช่น 10-15 ตัวเลขข้างหน้าคือ 10 ไม่นับ - และ null
+SELECT *
+FROM gamelist
+WHERE time IS NOT NULL AND time NOT LIKE '-%' 
+-- ไม่รวมค่า NULL และรายการที่ขึ้นต้นด้วย '-'
+ORDER BY CAST(CASE 
+                WHEN time LIKE '%-%' THEN SUBSTRING_INDEX(time, '-', 1) 
+                ELSE time 
+             END AS UNSIGNED)
+LIMIT 1;
+
+
+BEGIN TRANSACTION;
+-- ดำเนินการเปลี่ยนแปลงข้อมูลที่ต้องการ
+UPDATE table_name SET column1 = value1 WHERE condition;
+-- หากต้องการย้อนกลับ
+ROLLBACK;
+-- หากทุกอย่างถูกต้อง
+-- COMMIT;
+
+
+SAVEPOINT savepoint_name;
+-- ดำเนินการเปลี่ยนแปลงข้อมูลที่ต้องการ
+UPDATE table_name SET column1 = value1 WHERE condition;
+-- หากต้องการย้อนกลับ
+ROLLBACK TO SAVEPOINT savepoint_name;
+
+ลบช่องว่างหน้าสุดของ name
+UPDATE gamelist
+SET name = LTRIM(name)
+
+
+
